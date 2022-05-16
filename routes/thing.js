@@ -2,15 +2,14 @@ const {Router} = require('express')
 const router = Router()
 const t = require('../models/thingModel')
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res) => 
+    res.render('index', {}))
+
+router.get('/getnotes', async (req, res) => {
+
     const ts = await t.find({})
+    res.json(ts)
 
-    res.render('index', {
-        title: 'base page',
-        ts: ts.map(t => t.toJSON())
-    })
-
-    console.log(ts)
 })
 
 router.get('/create', (req, res) => {

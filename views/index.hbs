@@ -1,37 +1,36 @@
-<h2>Index Page</h2>
+<script type="text/javascript">
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", '/getnotes', false ); // false for synchronous request
+    xmlHttp.send( null );
+    const data = JSON.parse(xmlHttp.responseText);
 
-{{#if ts.length}}
-<table class="highlight">
-    <tr>
-        <td>title</td>
-        <td>description</td>
-        <td>status</td>
-        <td>latitude</td>
-        <td>longitude</td>
-        <td>phonenum</td>
-        <td>name</td>
-        <td>delete</td>
-    </tr>
+    console.log(data)
+</script>
+  
+<script type="text/javascript">
 
-    {{#each ts}}
-        <tr>
-            <td>{{title}}</td>
-            <td>{{description}}</td>
-            <td>{{status}}</td>
-            <td>{{latitude}}</td>
-            <td>{{longitude}}</td>
-            <td>{{phonenum}}</td>
-            <td>{{name}}</td>
-            <td>
-                <form action="/delete?id={{_id}}" method="post">
-                    <button class="btn" type="submit">delete</button>
-                </form>
-            </td>
-        </tr>
-    {{/each}}
+    ymaps.ready(init);
+    function init(){
+        var myMap = new ymaps.Map("map", {
+            center: [68.97, 33.07],
+            zoom: 11,
+            controls: []
+        });
 
-</table>
-    
-{{else}}
-    <p>nothing</p>
-{{/if}}
+        var notesCollection = new ymaps.GeoObjectCollection(null, {
+            preset: 'islands#blueIcon'
+        })
+
+        for (var i = 0; i < data.length; i++){
+            notesCollection.add(new ymaps.Placemark([data[i].latitude, data[i].longitude], {
+                balloonContentHeader: data[i].title,
+                balloonContentBody: data[i].description
+            }))
+        }
+
+        myMap.geoObjects.add(notesCollection)
+        notesCollection.ballon.events.add('click', n => n.open())
+    }
+</script>
+
+<div id="map" style="width: 100vw; height: 95vh; margin: 0%; padding: 0%"></div>
